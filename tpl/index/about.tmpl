@@ -1,6 +1,6 @@
 {{ define "index/about.tmpl" }}
-<html>
+{{ template "layout/header.tmpl" . }}
   <h1>{{ .title }}</h1>
   <p>about project</p>
-</html>
+{{ template "layout/footer.tmpl" }}
 {{ end }}

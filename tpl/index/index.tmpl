@@ -1,7 +1,21 @@
 {{ define "index/index.tmpl" }}
-<html>
-  <h1>{{ .title }}</h1>
-  <p>Using index/index.tmpl</p>
-  <p><a href="/about">About project</a></p>
-</html>
+{{ template "layout/header.tmpl" . }}
+    <div class="jumbotron">
+      <h1>Welcome to <span class="zf-green">{{ .title }}</span></h1>
+      <p>
+        Congratulations!
+      </p>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h2>Init commit</h2>
+        <p>Итак, первый пост.</p>
+      </div>
+      <div class="col-md-4">
+        <h2>Интересная тема</h2>
+        <p>Если вам хочется узнать интересную тему, добро пожаловать под кат.</p>
+      </div>
+    </div>
+{{ template "layout/footer.tmpl" }}
 {{ end }}
