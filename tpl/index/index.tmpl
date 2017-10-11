@@ -8,14 +8,12 @@
     </div>
 
     <div class="row">
+      {{ range $post := .posts }}
       <div class="col-md-4">
-        <h2>Init commit</h2>
-        <p>Итак, первый пост.</p>
+        <h2>{{ $post.Title }}</h2>
+        <p>{{ $post.ShortText }}</p>
       </div>
-      <div class="col-md-4">
-        <h2>Интересная тема</h2>
-        <p>Если вам хочется узнать интересную тему, добро пожаловать под кат.</p>
-      </div>
+      {{ end }}
     </div>
 {{ template "layout/footer.tmpl" }}
 {{ end }}
