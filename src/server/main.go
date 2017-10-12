@@ -7,9 +7,7 @@ import (
 )
 
 func main() {
-  router := gin.Default()
-  router.LoadHTMLGlob("tpl/**/*")
-  router.GET("/", routes.Index)
-  router.GET("/about", routes.About)
-  router.Run(":8080")
+  engine := gin.Default()
+  routes.Init(engine)
+  engine.Run(":8080")
 }
