@@ -1,4 +1,4 @@
-package models
+package post
 
 import (
   "time"
@@ -13,11 +13,11 @@ type Post struct {
   DateAdded time.Time
 }
 
-func FetchPosts() []Post {
+func FetchLast() []Post {
   db := lib.InitDb()
   defer db.Close()
 
   var posts []Post
-  db.Find(&posts)
+  db.Order("id desc").Limit(3).Find(&posts)
   return posts
 }

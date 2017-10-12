@@ -3,13 +3,13 @@ package routes
 import (
   "github.com/gin-gonic/gin"
   "net/http"
-  "models"
+  "models/post"
 )
 
 func Index(c *gin.Context) {
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
-    "posts": models.FetchPosts(),
+    "posts": post.FetchLast(),
   })
 }
 
