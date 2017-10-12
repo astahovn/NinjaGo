@@ -2,7 +2,7 @@ package post
 
 import (
   "time"
-  "lib"
+  "lib/db"
 )
 
 type Post struct {
@@ -14,10 +14,7 @@ type Post struct {
 }
 
 func FetchLast() []Post {
-  db := lib.InitDb()
-  defer db.Close()
-
   var posts []Post
-  db.Order("id desc").Limit(3).Find(&posts)
+  db.GetInstance().Order("id desc").Limit(3).Find(&posts)
   return posts
 }
