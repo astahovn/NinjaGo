@@ -13,8 +13,7 @@ func Index(c *gin.Context) {
   })
 }
 
-func About(c *gin.Context) {
-  c.HTML(http.StatusOK, "index/about.tmpl", gin.H{
-    "title": "About",
+func Login(c *gin.Context) {
+  c.HTML(http.StatusOK, "index/login.tmpl", gin.H{
   })
 }

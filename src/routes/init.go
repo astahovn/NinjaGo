@@ -14,5 +14,5 @@ func Init(engine *gin.Engine) {
 
   // init dynamic
   engine.GET("/", Index)
-  engine.GET("/about", About)
+  engine.GET("/login", Login)
 }
