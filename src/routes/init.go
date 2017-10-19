@@ -15,4 +15,5 @@ func Init(engine *gin.Engine) {
   // init dynamic
   engine.GET("/", Index)
   engine.GET("/login", Login)
+  engine.POST("/login", LoginPost)
 }
