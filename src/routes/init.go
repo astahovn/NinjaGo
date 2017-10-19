@@ -16,4 +16,5 @@ func Init(engine *gin.Engine) {
   engine.GET("/", Index)
   engine.GET("/login", Login)
   engine.POST("/login", LoginPost)
+  engine.GET("/logout", Logout)
 }
