@@ -4,6 +4,7 @@ import (
   "time"
   "lib/db"
   "github.com/gin-gonic/gin"
+  "models/user"
 )
 
 type Session struct {
@@ -12,6 +13,11 @@ type Session struct {
   AuthToken string
   DateLogin time.Time
   UserAgent string
+}
+
+type AuthData struct {
+  UserId int
+  Realname string
 }
 
 var currentSession Session
@@ -51,16 +57,14 @@ func RemoveOldSession(userId int) {
   db.GetInstance().Exec("delete from sessions where user_id = ?", userId)
 }
 
-func GetAuth() string {
+func GetAuth() AuthData {
   if currentSession.UserId > 0 {
-
-    type Result struct {
-      Username string
+    var tmpUser user.User
+    db.GetInstance().Where("id = ?", currentSession.UserId).First(&tmpUser)
+    return AuthData{
+      UserId: tmpUser.ID,
+      Realname: tmpUser.Realname,
     }
-    var result Result
-    db.GetInstance().Raw("SELECT username FROM users WHERE id = ?", currentSession.UserId).Scan(&result)
-
-    return result.Username
   }
-  return ""
+  return AuthData{}
 }

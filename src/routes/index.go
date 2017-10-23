@@ -11,7 +11,7 @@ func Index(c *gin.Context) {
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
     "posts": post.FetchLast(),
-    "auth": session.GetAuth(),
+    "auth": session.GetAuth().Realname,
   })
 }
 
