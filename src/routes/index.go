@@ -4,7 +4,9 @@ import (
   "github.com/gin-gonic/gin"
   "net/http"
   "models/post"
+  "models/user"
   "lib/session"
+  "lib/db"
 )
 
 func Index(c *gin.Context) {
@@ -22,9 +24,11 @@ func Login(c *gin.Context) {
 
 func LoginPost(c *gin.Context) {
   login := c.PostForm("login")
-  password := c.PostForm("password")
-  if login == "habr" && password == "habr" {
-    session.Init(c, 1, c.Request.UserAgent())
+  //password := c.PostForm("password")
+  var tmpUser user.User
+  db.GetInstance().Where("username = ?", login).First(&tmpUser)
+  if tmpUser.ID > 0 {
+    session.Init(c, tmpUser.ID, c.Request.UserAgent())
     c.Redirect(http.StatusFound, "/")
     return
   }
