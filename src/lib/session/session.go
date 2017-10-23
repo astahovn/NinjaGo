@@ -1,9 +1,11 @@
 package session
 
 import (
-  "time"
-  "lib/db"
   "github.com/gin-gonic/gin"
+  "time"
+  "crypto/md5"
+  "encoding/hex"
+  "lib/db"
   "models/user"
 )
 
@@ -38,11 +40,16 @@ func Auth() gin.HandlerFunc {
 
 func Init(c *gin.Context, userId int, userAgent string) {
   db.GetInstance().Delete(Session{}, "user_id = ?", userId)
-  sessionItem := Session{UserId: userId, AuthToken: "123", DateLogin: time.Now(), UserAgent: userAgent}
+
+  var hashMD5 = md5.New()
+  hashMD5.Write([]byte(time.Now().String()))
+  var token string = hex.EncodeToString(hashMD5.Sum(nil))
+
+  sessionItem := Session{UserId: userId, AuthToken: token, DateLogin: time.Now(), UserAgent: userAgent}
   db.GetInstance().NewRecord(sessionItem)
   db.GetInstance().Create(&sessionItem)
 
-  c.SetCookie("token", "123", 60 * 60 * 24, "/", "", false, false)
+  c.SetCookie("token", token, 60 * 60 * 24, "/", "", false, false)
 }
 
 func Close(c *gin.Context) {
