@@ -5,6 +5,7 @@ import (
 
   "routes"
   "lib/db"
+  "lib/session"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 
   // init engine, routes and run app
   engine := gin.Default()
+  engine.Use(session.Auth())
   routes.Init(engine)
   engine.Run(":8080")
 }

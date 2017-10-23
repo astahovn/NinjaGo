@@ -16,6 +16,20 @@ type Session struct {
 
 var currentSession Session
 
+func Auth() gin.HandlerFunc {
+  return func(c *gin.Context) {
+
+    token, err := c.Cookie("token")
+    if err != nil {
+      currentSession = Session{}
+      return
+    }
+    db.GetInstance().Where("auth_token = ?", token).First(&currentSession)
+
+    c.Next()
+  }
+}
+
 func Init(c *gin.Context, userId int, userAgent string) {
   RemoveOldSession(userId)
   sessionItem := Session{UserId: userId, AuthToken: "123", DateLogin: time.Now(), UserAgent: userAgent}
@@ -31,15 +45,6 @@ func Close(c *gin.Context) {
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
   currentSession = Session{}
-}
-
-func CheckSession(c *gin.Context) {
-  token, err := c.Cookie("token")
-  if err != nil {
-    currentSession = Session{}
-    return
-  }
-  db.GetInstance().Where("auth_token = ?", token).First(&currentSession)
 }
 
 func RemoveOldSession(userId int) {

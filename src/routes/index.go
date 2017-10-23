@@ -8,7 +8,6 @@ import (
 )
 
 func Index(c *gin.Context) {
-  session.CheckSession(c)
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
     "posts": post.FetchLast(),
@@ -36,7 +35,6 @@ func LoginPost(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-  session.CheckSession(c)
   session.Close(c)
   c.Redirect(http.StatusFound, "/")
 }
