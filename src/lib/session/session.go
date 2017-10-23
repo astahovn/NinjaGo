@@ -37,7 +37,7 @@ func Auth() gin.HandlerFunc {
 }
 
 func Init(c *gin.Context, userId int, userAgent string) {
-  RemoveOldSession(userId)
+  db.GetInstance().Delete(Session{}, "user_id = ?", userId)
   sessionItem := Session{UserId: userId, AuthToken: "123", DateLogin: time.Now(), UserAgent: userAgent}
   db.GetInstance().NewRecord(sessionItem)
   db.GetInstance().Create(&sessionItem)
@@ -51,10 +51,6 @@ func Close(c *gin.Context) {
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
   currentSession = Session{}
-}
-
-func RemoveOldSession(userId int) {
-  db.GetInstance().Delete(Session{}, "user_id = ?", userId)
 }
 
 func GetAuth() AuthData {
