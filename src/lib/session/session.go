@@ -47,14 +47,14 @@ func Init(c *gin.Context, userId int, userAgent string) {
 
 func Close(c *gin.Context) {
   if currentSession.AuthToken != "" {
-    db.GetInstance().Exec("delete from sessions where auth_token = ?", currentSession.AuthToken)
+    db.GetInstance().Delete(Session{}, "auth_token = ?", currentSession.AuthToken)
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
   currentSession = Session{}
 }
 
 func RemoveOldSession(userId int) {
-  db.GetInstance().Exec("delete from sessions where user_id = ?", userId)
+  db.GetInstance().Delete(Session{}, "user_id = ?", userId)
 }
 
 func GetAuth() AuthData {
