@@ -10,6 +10,11 @@ import (
 )
 
 func Index(c *gin.Context) {
+  if session.GetAuth().UserId > 0 {
+    c.Redirect(http.StatusFound, "/profile")
+    return
+  }
+
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
     "posts": post.FetchLast(),
@@ -32,7 +37,7 @@ func LoginPost(c *gin.Context) {
     c.Redirect(http.StatusFound, "/profile")
     return
   }
-  c.HTML(http.StatusOK, "index/login.tmpl", gin.H{
+  c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "login": login,
     "error": true,
   })
