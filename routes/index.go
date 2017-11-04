@@ -3,10 +3,10 @@ package routes
 import (
   "github.com/gin-gonic/gin"
   "net/http"
-  "models/post"
-  "models/user"
-  "lib/session"
-  "lib/db"
+  "github.com/astahovn/ninja/models/post"
+  "github.com/astahovn/ninja/models/user"
+  "github.com/astahovn/ninja/lib/session"
+  "github.com/astahovn/ninja/lib/db"
 )
 
 func Index(c *gin.Context) {

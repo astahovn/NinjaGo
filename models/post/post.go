@@ -2,7 +2,7 @@ package post
 
 import (
   "time"
-  "lib/db"
+  "github.com/astahovn/ninja/lib/db"
 )
 
 type Post struct {

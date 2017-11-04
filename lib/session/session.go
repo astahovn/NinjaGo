@@ -5,8 +5,8 @@ import (
   "time"
   "crypto/md5"
   "encoding/hex"
-  "lib/db"
-  "models/user"
+  "github.com/astahovn/ninja/lib/db"
+  "github.com/astahovn/ninja/models/user"
 )
 
 type Session struct {

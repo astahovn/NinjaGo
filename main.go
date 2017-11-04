@@ -3,9 +3,9 @@ package main
 import (
   "github.com/gin-gonic/gin"
 
-  "routes"
-  "lib/db"
-  "lib/session"
+  "github.com/astahovn/ninja/routes"
+  "github.com/astahovn/ninja/lib/db"
+  "github.com/astahovn/ninja/lib/session"
 )
 
 func main() {
