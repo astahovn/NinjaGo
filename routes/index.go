@@ -22,8 +22,8 @@ func Index(c *gin.Context) {
   })
 }
 
-func Login(c *gin.Context) {
-  c.HTML(http.StatusOK, "index/login.tmpl", gin.H{
+func Register(c *gin.Context) {
+  c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
   })
 }
 
