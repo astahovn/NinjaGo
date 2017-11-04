@@ -29,7 +29,7 @@ func LoginPost(c *gin.Context) {
   db.GetInstance().Where("username = ?", login).First(&tmpUser)
   if tmpUser.ID > 0 {
     session.Init(c, tmpUser.ID, c.Request.UserAgent())
-    c.Redirect(http.StatusFound, "/")
+    c.Redirect(http.StatusFound, "/profile")
     return
   }
   c.HTML(http.StatusOK, "index/login.tmpl", gin.H{

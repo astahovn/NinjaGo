@@ -1,0 +1,17 @@
+{{ define "profile/index.tmpl" }}
+{{ template "layout/profile_header.tmpl" . }}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="/profile/edit" class="float-right">Edit</a>
+                Profile
+            </div>
+            <div class="panel-body">
+                Nick: {{ .auth }}
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "layout/profile_footer.tmpl" }}
+{{ end }}
