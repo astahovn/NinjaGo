@@ -27,6 +27,29 @@ func Register(c *gin.Context) {
   })
 }
 
+func RegisterPost(c *gin.Context) {
+  login := c.PostForm("login")
+  //password := c.PostForm("password")
+  var tmpUser user.User
+  db.GetInstance().Where("username = ?", login).First(&tmpUser)
+  if tmpUser.ID > 0 {
+    c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
+      "login": login,
+      "errors": "Login is busy",
+    })
+    return
+  }
+
+  newUser := user.User{Username: login}
+  db.GetInstance().Create(&newUser)
+
+  c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
+    "login": login,
+    "success": true,
+    "errors": false,
+  })
+}
+
 func LoginPost(c *gin.Context) {
   login := c.PostForm("login")
   //password := c.PostForm("password")
