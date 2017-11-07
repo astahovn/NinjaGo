@@ -8,7 +8,8 @@
                 Profile
             </div>
             <div class="panel-body">
-                Nick: {{ .auth }}
+                {{ $authUser := .auth }}
+                Nick: {{ $authUser.Realname }}
             </div>
         </div>
     </div>

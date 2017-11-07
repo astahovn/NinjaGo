@@ -4,6 +4,8 @@ import (
   "github.com/gin-gonic/gin"
   "net/http"
   "github.com/astahovn/ninja/lib/session"
+  "github.com/astahovn/ninja/lib/db"
+  "github.com/astahovn/ninja/models/user"
 )
 
 func ProfileIndex(c *gin.Context) {
@@ -11,8 +13,12 @@ func ProfileIndex(c *gin.Context) {
     c.Redirect(http.StatusFound, "/")
     return
   }
+
+  var authUser user.User
+  db.GetInstance().Where("id = ?", session.GetAuth().UserId).First(&authUser)
+
   c.HTML(http.StatusOK, "profile/index.tmpl", gin.H{
     "title": "Profile",
-    "auth": session.GetAuth().Realname,
+    "auth": authUser,
   })
 }
