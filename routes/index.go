@@ -3,7 +3,6 @@ package routes
 import (
   "github.com/gin-gonic/gin"
   "net/http"
-  "github.com/astahovn/ninja/models/post"
   "github.com/astahovn/ninja/models/user"
   "github.com/astahovn/ninja/lib/session"
 )
@@ -17,7 +16,6 @@ func Index(c *gin.Context) {
 
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
-    "posts": post.FetchLast(),
     "auth": session.GetAuth().Nick,
   })
 }
