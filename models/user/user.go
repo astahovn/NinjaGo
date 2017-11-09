@@ -11,6 +11,12 @@ type User struct {
   Nick string
 }
 
+func LoadById(id int) User {
+  var tmpUser User
+  db.GetInstance().Where("id = ?", id).First(&tmpUser)
+  return tmpUser
+}
+
 func LoadByUsername(login string) User {
   var tmpUser User
   db.GetInstance().Where("username = ?", login).First(&tmpUser)
