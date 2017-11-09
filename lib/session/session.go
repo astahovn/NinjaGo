@@ -19,7 +19,7 @@ type Session struct {
 
 type AuthData struct {
   UserId int
-  Realname string
+  Nick string
 }
 
 var currentSession Session
@@ -66,7 +66,7 @@ func GetAuth() AuthData {
     db.GetInstance().Where("id = ?", currentSession.UserId).First(&tmpUser)
     return AuthData{
       UserId: tmpUser.ID,
-      Realname: tmpUser.Realname,
+      Nick: tmpUser.Nick,
     }
   }
   return AuthData{}
