@@ -8,6 +8,7 @@ import (
   "github.com/astahovn/ninja/models/user"
 )
 
+// Profile index page
 func ProfileIndex(c *gin.Context) {
   if session.GetAuth().UserId == 0 {
     c.Redirect(http.StatusFound, "/")

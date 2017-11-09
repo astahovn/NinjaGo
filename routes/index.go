@@ -6,9 +6,9 @@ import (
   "github.com/astahovn/ninja/models/post"
   "github.com/astahovn/ninja/models/user"
   "github.com/astahovn/ninja/lib/session"
-  "github.com/astahovn/ninja/lib/db"
 )
 
+// Index page
 func Index(c *gin.Context) {
   if session.GetAuth().UserId > 0 {
     c.Redirect(http.StatusFound, "/profile")
@@ -22,26 +22,25 @@ func Index(c *gin.Context) {
   })
 }
 
+// Registration form
 func Register(c *gin.Context) {
   c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
   })
 }
 
+// Registration request
 func RegisterPost(c *gin.Context) {
   login := c.PostForm("login")
   //password := c.PostForm("password")
-  var tmpUser user.User
-  db.GetInstance().Where("username = ?", login).First(&tmpUser)
-  if tmpUser.ID > 0 {
+
+  newUser := user.User{Username: login}
+  if Error := user.Register(newUser); Error != "" {
     c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
       "login": login,
-      "errors": "Login is busy",
+      "errors": Error,
     })
     return
   }
-
-  newUser := user.User{Username: login}
-  db.GetInstance().Create(&newUser)
 
   c.HTML(http.StatusOK, "index/register.tmpl", gin.H{
     "login": login,
@@ -50,11 +49,11 @@ func RegisterPost(c *gin.Context) {
   })
 }
 
+// Login request
 func LoginPost(c *gin.Context) {
   login := c.PostForm("login")
   //password := c.PostForm("password")
-  var tmpUser user.User
-  db.GetInstance().Where("username = ?", login).First(&tmpUser)
+  tmpUser := user.LoadByUsername(login)
   if tmpUser.ID > 0 {
     session.Init(c, tmpUser.ID, c.Request.UserAgent())
     c.Redirect(http.StatusFound, "/profile")
@@ -66,6 +65,7 @@ func LoginPost(c *gin.Context) {
   })
 }
 
+// Logout request
 func Logout(c *gin.Context) {
   session.Close(c)
   c.Redirect(http.StatusFound, "/")
