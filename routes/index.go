@@ -9,14 +9,13 @@ import (
 
 // Index page
 func Index(c *gin.Context) {
-  if session.GetAuth(c).UserId > 0 {
+  if !session.IsGuest(c) {
     c.Redirect(http.StatusFound, "/profile")
     return
   }
 
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
-    "auth": session.GetAuth(c).Nick,
   })
 }
 
@@ -53,7 +52,7 @@ func LoginPost(c *gin.Context) {
   //password := c.PostForm("password")
   tmpUser := user.LoadByUsername(login)
   if tmpUser.ID > 0 {
-    session.Init(c, tmpUser.ID, c.Request.UserAgent())
+    session.Init(c, tmpUser.ID)
     c.Redirect(http.StatusFound, "/profile")
     return
   }

@@ -25,25 +25,44 @@ type AuthData struct {
   Nick string
 }
 
+const KeyHasSession = "HasSession"
+const KeySession = "Session"
+const KeyAuthData = "AuthData"
+
 // Auth middleware
 func Auth() gin.HandlerFunc {
   return func(c *gin.Context) {
 
     token, err := c.Cookie("token")
     if err != nil {
-      c.Set("currentSession", Session{})
+      c.Set(KeyHasSession, false)
+      c.Next()
       return
     }
+
     var currentSession Session
-    db.GetInstance().Where("auth_token = ?", token).First(&currentSession)
-    c.Set("currentSession", currentSession)
+    if db.GetInstance().Where("auth_token = ?", token).First(&currentSession).RecordNotFound() {
+      c.Set(KeyHasSession, false)
+      c.SetCookie("token", "", 0, "/", "", false, false)
+
+    } else {
+      c.Set(KeySession, currentSession)
+      c.Set(KeyHasSession, true)
+
+      byt := []byte(currentSession.Data)
+      var authData AuthData
+      if err := json.Unmarshal(byt, &authData); err != nil {
+        panic(err)
+      }
+      c.Set(KeyAuthData, authData)
+    }
 
     c.Next()
   }
 }
 
 // Init new session
-func Init(c *gin.Context, userId int, userAgent string) {
+func Init(c *gin.Context, userId int) {
   // Remove old session, if exists
   db.GetInstance().Delete(Session{}, "user_id = ?", userId)
 
@@ -66,7 +85,7 @@ func Init(c *gin.Context, userId int, userAgent string) {
     UserId: userId,
     AuthToken: token,
     DateLogin: time.Now(),
-    UserAgent: userAgent,
+    UserAgent: c.Request.UserAgent(),
     Data: string(authDataJson),
   }
   db.GetInstance().NewRecord(sessionItem)
@@ -78,27 +97,28 @@ func Init(c *gin.Context, userId int, userAgent string) {
 
 // Close existed session
 func Close(c *gin.Context) {
-  var ISession interface{}
-  ISession, _ = c.Get("currentSession")
-  currentSession := ISession.(Session)
-  if currentSession.AuthToken != "" {
+  if c.GetBool(KeyHasSession) {
+    var ISession interface{}
+    ISession, _ = c.Get(KeySession)
+    currentSession := ISession.(Session)
     db.GetInstance().Delete(Session{}, "auth_token = ?", currentSession.AuthToken)
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
+  c.Set(KeyHasSession, false)
+}
+
+// Check active user is guest
+func IsGuest(c *gin.Context) bool {
+  return !c.GetBool(KeyHasSession)
 }
 
 // Get AuthData for current session if exists
 func GetAuth(c *gin.Context) AuthData {
-  var ISession interface{}
-  ISession, _ = c.Get("currentSession")
-  currentSession := ISession.(Session)
-  if currentSession.UserId > 0 {
-    byt := []byte(currentSession.Data)
-    var authData AuthData
-    if err := json.Unmarshal(byt, &authData); err != nil {
-      panic(err)
-    }
-    return authData
+  if !c.GetBool(KeyHasSession) {
+    return AuthData{}
   }
-  return AuthData{}
+
+  var IAuthData interface{}
+  IAuthData, _ = c.Get(KeyAuthData)
+  return IAuthData.(AuthData)
 }
