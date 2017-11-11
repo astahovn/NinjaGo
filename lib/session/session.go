@@ -72,7 +72,7 @@ func Init(c *gin.Context, userId int) {
   token := hex.EncodeToString(hashMD5.Sum(nil))
 
   // Prepare session data
-  objUser := user.LoadById(userId)
+  objUser, _ := user.LoadById(userId)
   authData := AuthData{
     UserId: userId,
     Username: objUser.Username,

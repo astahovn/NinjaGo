@@ -14,7 +14,7 @@ func ProfileIndex(c *gin.Context) {
     return
   }
 
-  authUser := user.LoadById(session.GetAuth(c).UserId)
+  authUser, _ := user.LoadById(session.GetAuth(c).UserId)
 
   c.HTML(http.StatusOK, "profile/index.tmpl", gin.H{
     "title": "Profile",

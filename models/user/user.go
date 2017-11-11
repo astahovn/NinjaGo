@@ -11,21 +11,21 @@ type User struct {
   Nick string
 }
 
-func LoadById(id int) User {
-  var tmpUser User
-  db.GetInstance().Where("id = ?", id).First(&tmpUser)
-  return tmpUser
+func LoadById(id int) (tmpUser User, found bool) {
+  notFound := db.GetInstance().Where("id = ?", id).First(&tmpUser).RecordNotFound()
+  found = !notFound
+  return
 }
 
-func LoadByUsername(login string) User {
-  var tmpUser User
-  db.GetInstance().Where("username = ?", login).First(&tmpUser)
-  return tmpUser
+func LoadByUsername(login string) (tmpUser User, found bool) {
+  notFound := db.GetInstance().Where("username = ?", login).First(&tmpUser).RecordNotFound()
+  found = !notFound
+  return
 }
 
 func Register(user User) (Error string) {
-  tmpUser := LoadByUsername(user.Username)
-  if tmpUser.ID > 0 {
+  _, found := LoadByUsername(user.Username)
+  if found {
     Error = "Login is busy"
     return
   }

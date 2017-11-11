@@ -50,8 +50,8 @@ func RegisterPost(c *gin.Context) {
 func LoginPost(c *gin.Context) {
   login := c.PostForm("login")
   //password := c.PostForm("password")
-  tmpUser := user.LoadByUsername(login)
-  if tmpUser.ID > 0 {
+  tmpUser, found := user.LoadByUsername(login)
+  if found {
     session.Init(c, tmpUser.ID)
     c.Redirect(http.StatusFound, "/profile")
     return
