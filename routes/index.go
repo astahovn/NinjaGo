@@ -9,14 +9,14 @@ import (
 
 // Index page
 func Index(c *gin.Context) {
-  if session.GetAuth().UserId > 0 {
+  if session.GetAuth(c).UserId > 0 {
     c.Redirect(http.StatusFound, "/profile")
     return
   }
 
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
-    "auth": session.GetAuth().Nick,
+    "auth": session.GetAuth(c).Nick,
   })
 }
 

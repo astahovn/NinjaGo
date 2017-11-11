@@ -25,18 +25,18 @@ type AuthData struct {
   Nick string
 }
 
-var currentSession Session
-
 // Auth middleware
 func Auth() gin.HandlerFunc {
   return func(c *gin.Context) {
 
     token, err := c.Cookie("token")
     if err != nil {
-      currentSession = Session{}
+      c.Set("currentSession", Session{})
       return
     }
+    var currentSession Session
     db.GetInstance().Where("auth_token = ?", token).First(&currentSession)
+    c.Set("currentSession", currentSession)
 
     c.Next()
   }
@@ -78,15 +78,20 @@ func Init(c *gin.Context, userId int, userAgent string) {
 
 // Close existed session
 func Close(c *gin.Context) {
+  var ISession interface{}
+  ISession, _ = c.Get("currentSession")
+  currentSession := ISession.(Session)
   if currentSession.AuthToken != "" {
     db.GetInstance().Delete(Session{}, "auth_token = ?", currentSession.AuthToken)
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
-  currentSession = Session{}
 }
 
 // Get AuthData for current session if exists
-func GetAuth() AuthData {
+func GetAuth(c *gin.Context) AuthData {
+  var ISession interface{}
+  ISession, _ = c.Get("currentSession")
+  currentSession := ISession.(Session)
   if currentSession.UserId > 0 {
     byt := []byte(currentSession.Data)
     var authData AuthData
