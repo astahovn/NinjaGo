@@ -20,4 +20,6 @@ func Init(engine *gin.Engine) {
   engine.GET("/logout", Logout)
 
   engine.GET("/profile", ProfileIndex)
+  engine.GET("/profile/edit", ProfileEdit)
+  engine.POST("/profile/edit_save", ProfileEditSave)
 }

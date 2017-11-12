@@ -1,0 +1,22 @@
+{{ define "profile/edit.tmpl" }}
+{{ template "layout/profile_header.tmpl" . }}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Profile</div>
+            <div class="panel-body">
+                <form action="/profile/edit_save" method="post">
+                    <div class="form-group">
+                        <input type="text" name="nick" class="form-control" placeholder="Nick" value="{{ .nick }}">
+                    </div>
+                    {{ if .errors }}
+                    <div class="alert alert-danger">{{ .errors }}</div>
+                    {{ end }}
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "layout/profile_footer.tmpl" }}
+{{ end }}
