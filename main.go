@@ -16,6 +16,7 @@ func main() {
   // init engine, routes and run app
   engine := gin.Default()
   engine.Use(session.Auth())
+  engine.Use(routes.Access())
   routes.Init(engine)
   engine.Run(":8080")
 }

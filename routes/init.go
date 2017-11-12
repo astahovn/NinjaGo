@@ -2,6 +2,9 @@ package routes
 
 import (
   "github.com/gin-gonic/gin"
+  "github.com/astahovn/ninja/lib/session"
+  "strings"
+  "net/http"
 )
 
 func Init(engine *gin.Engine) {
@@ -22,4 +25,19 @@ func Init(engine *gin.Engine) {
   engine.GET("/profile", ProfileIndex)
   engine.GET("/profile/edit", ProfileEdit)
   engine.POST("/profile/edit_save", ProfileEditSave)
+}
+
+// Access middleware
+func Access() gin.HandlerFunc {
+  return func(c *gin.Context) {
+    if strings.Contains(c.Request.URL.Path, "/profile") {
+      if session.IsGuest(c) {
+        c.Redirect(http.StatusFound, "/")
+        c.Abort()
+        return
+      }
+    }
+
+    c.Next()
+  }
 }

@@ -10,11 +10,6 @@ import (
 
 // Profile index page
 func ProfileIndex(c *gin.Context) {
-  if session.IsGuest(c) {
-    c.Redirect(http.StatusFound, "/")
-    return
-  }
-
   authUser, _ := user.LoadById(session.GetAuth(c).UserId)
 
   c.HTML(http.StatusOK, "profile/index.tmpl", gin.H{
@@ -25,11 +20,6 @@ func ProfileIndex(c *gin.Context) {
 
 // Profile edit page
 func ProfileEdit(c *gin.Context) {
-  if session.IsGuest(c) {
-    c.Redirect(http.StatusFound, "/")
-    return
-  }
-
   authUser, _ := user.LoadById(session.GetAuth(c).UserId)
 
   c.HTML(http.StatusOK, "profile/edit.tmpl", gin.H{
