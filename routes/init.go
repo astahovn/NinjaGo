@@ -3,7 +3,6 @@ package routes
 import (
   "github.com/gin-gonic/gin"
   "github.com/astahovn/ninja/lib/session"
-  "strings"
   "net/http"
 )
 
@@ -27,15 +26,25 @@ func Init(engine *gin.Engine) {
   engine.POST("/profile/edit_save", ProfileEditSave)
 }
 
+var guestRoutes = map[string]bool{
+    "/": true,
+    "/register": true,
+    "/register_user": true,
+    "/login": true,
+  }
+
 // Access middleware
 func Access() gin.HandlerFunc {
   return func(c *gin.Context) {
-    if strings.Contains(c.Request.URL.Path, "/profile") {
-      if session.IsGuest(c) {
-        c.Redirect(http.StatusFound, "/")
-        c.Abort()
-        return
-      }
+    if session.IsGuest(c) && !guestRoutes[c.Request.URL.Path] {
+      c.Redirect(http.StatusFound, "/")
+      c.Abort()
+      return
+    }
+    if !session.IsGuest(c) && guestRoutes[c.Request.URL.Path] {
+      c.Redirect(http.StatusFound, "/profile")
+      c.Abort()
+      return
     }
 
     c.Next()

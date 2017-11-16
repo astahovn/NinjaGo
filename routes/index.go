@@ -9,11 +9,6 @@ import (
 
 // Index page
 func Index(c *gin.Context) {
-  if !session.IsGuest(c) {
-    c.Redirect(http.StatusFound, "/profile")
-    return
-  }
-
   c.HTML(http.StatusOK, "index/index.tmpl", gin.H{
     "title": "Index",
   })
