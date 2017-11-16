@@ -4,23 +4,20 @@ import (
   "github.com/gin-gonic/gin"
   "net/http"
   "github.com/astahovn/ninja/lib/session"
-  "github.com/astahovn/ninja/models/user"
   "github.com/astahovn/ninja/lib/db"
 )
 
 // Profile index page
 func ProfileIndex(c *gin.Context) {
-  authUser, _ := user.LoadById(session.GetAuth(c))
-
   c.HTML(http.StatusOK, "profile/index.tmpl", gin.H{
     "title": "Profile",
-    "auth": authUser,
+    "auth": session.GetActiveUser(c),
   })
 }
 
 // Profile edit page
 func ProfileEdit(c *gin.Context) {
-  authUser, _ := user.LoadById(session.GetAuth(c))
+  authUser := session.GetActiveUser(c)
 
   c.HTML(http.StatusOK, "profile/edit.tmpl", gin.H{
     "title": "Profile edit",
@@ -32,7 +29,7 @@ func ProfileEdit(c *gin.Context) {
 // Profile edit page form saving
 func ProfileEditSave(c *gin.Context) {
   nick := c.PostForm("nick")
-  authUser, _ := user.LoadById(session.GetAuth(c))
+  authUser := session.GetActiveUser(c)
 
   if nick == "" {
     c.HTML(http.StatusOK, "profile/edit.tmpl", gin.H{

@@ -6,6 +6,7 @@ import (
   "crypto/md5"
   "encoding/hex"
   "github.com/astahovn/ninja/lib/db"
+  "github.com/astahovn/ninja/models/user"
 )
 
 type Session struct {
@@ -19,6 +20,7 @@ type Session struct {
 
 const KeyHasSession = "HasSession"
 const KeySession = "Session"
+const KeyActiveUser = "ActiveUser"
 
 // Auth middleware
 func Auth() gin.HandlerFunc {
@@ -37,8 +39,10 @@ func Auth() gin.HandlerFunc {
       c.SetCookie("token", "", 0, "/", "", false, false)
 
     } else {
-      c.Set(KeySession, currentSession)
       c.Set(KeyHasSession, true)
+      c.Set(KeySession, currentSession)
+      activeUser, _ := user.LoadById(currentSession.UserId)
+      c.Set(KeyActiveUser, activeUser)
     }
 
     c.Next()
@@ -74,8 +78,7 @@ func Close(c *gin.Context) {
   if c.GetBool(KeyHasSession) {
     var ISession interface{}
     ISession, _ = c.Get(KeySession)
-    currentSession := ISession.(Session)
-    db.GetInstance().Delete(Session{}, "auth_token = ?", currentSession.AuthToken)
+    db.GetInstance().Delete(Session{}, "auth_token = ?", ISession.(Session).AuthToken)
   }
   c.SetCookie("token", "", 0, "/", "", false, false)
   c.Set(KeyHasSession, false)
@@ -86,13 +89,9 @@ func IsGuest(c *gin.Context) bool {
   return !c.GetBool(KeyHasSession)
 }
 
-// Get auth user id for current session if exists
-func GetAuth(c *gin.Context) int {
-  if !c.GetBool(KeyHasSession) {
-    return 0
-  }
-
-  var ISession interface{}
-  ISession, _ = c.Get(KeySession)
-  return ISession.(Session).UserId
+// Get authenticated user
+func GetActiveUser(c *gin.Context) user.User {
+  var IUser interface{}
+  IUser, _ = c.Get(KeyActiveUser)
+  return IUser.(user.User)
 }
