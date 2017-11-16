@@ -5,9 +5,7 @@ import (
   "time"
   "crypto/md5"
   "encoding/hex"
-  "encoding/json"
   "github.com/astahovn/ninja/lib/db"
-  "github.com/astahovn/ninja/models/user"
 )
 
 type Session struct {
@@ -19,15 +17,8 @@ type Session struct {
   Data string
 }
 
-type AuthData struct {
-  UserId int
-  Username string
-  Nick string
-}
-
 const KeyHasSession = "HasSession"
 const KeySession = "Session"
-const KeyAuthData = "AuthData"
 
 // Auth middleware
 func Auth() gin.HandlerFunc {
@@ -48,13 +39,6 @@ func Auth() gin.HandlerFunc {
     } else {
       c.Set(KeySession, currentSession)
       c.Set(KeyHasSession, true)
-
-      byt := []byte(currentSession.Data)
-      var authData AuthData
-      if err := json.Unmarshal(byt, &authData); err != nil {
-        panic(err)
-      }
-      c.Set(KeyAuthData, authData)
     }
 
     c.Next()
@@ -71,22 +55,12 @@ func Init(c *gin.Context, userId int) {
   hashMD5.Write([]byte(time.Now().String()))
   token := hex.EncodeToString(hashMD5.Sum(nil))
 
-  // Prepare session data
-  objUser, _ := user.LoadById(userId)
-  authData := AuthData{
-    UserId: userId,
-    Username: objUser.Username,
-    Nick: objUser.Nick,
-  }
-  authDataJson, _ := json.Marshal(&authData)
-
   // Create session DB record
   sessionItem := Session{
     UserId: userId,
     AuthToken: token,
     DateLogin: time.Now(),
     UserAgent: c.Request.UserAgent(),
-    Data: string(authDataJson),
   }
   db.GetInstance().NewRecord(sessionItem)
   db.GetInstance().Create(&sessionItem)
@@ -112,13 +86,13 @@ func IsGuest(c *gin.Context) bool {
   return !c.GetBool(KeyHasSession)
 }
 
-// Get AuthData for current session if exists
-func GetAuth(c *gin.Context) AuthData {
+// Get auth user id for current session if exists
+func GetAuth(c *gin.Context) int {
   if !c.GetBool(KeyHasSession) {
-    return AuthData{}
+    return 0
   }
 
-  var IAuthData interface{}
-  IAuthData, _ = c.Get(KeyAuthData)
-  return IAuthData.(AuthData)
+  var ISession interface{}
+  ISession, _ = c.Get(KeySession)
+  return ISession.(Session).UserId
 }

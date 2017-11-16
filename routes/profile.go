@@ -10,7 +10,7 @@ import (
 
 // Profile index page
 func ProfileIndex(c *gin.Context) {
-  authUser, _ := user.LoadById(session.GetAuth(c).UserId)
+  authUser, _ := user.LoadById(session.GetAuth(c))
 
   c.HTML(http.StatusOK, "profile/index.tmpl", gin.H{
     "title": "Profile",
@@ -20,7 +20,7 @@ func ProfileIndex(c *gin.Context) {
 
 // Profile edit page
 func ProfileEdit(c *gin.Context) {
-  authUser, _ := user.LoadById(session.GetAuth(c).UserId)
+  authUser, _ := user.LoadById(session.GetAuth(c))
 
   c.HTML(http.StatusOK, "profile/edit.tmpl", gin.H{
     "title": "Profile edit",
@@ -32,7 +32,7 @@ func ProfileEdit(c *gin.Context) {
 // Profile edit page form saving
 func ProfileEditSave(c *gin.Context) {
   nick := c.PostForm("nick")
-  authUser, _ := user.LoadById(session.GetAuth(c).UserId)
+  authUser, _ := user.LoadById(session.GetAuth(c))
 
   if nick == "" {
     c.HTML(http.StatusOK, "profile/edit.tmpl", gin.H{
